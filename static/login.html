@@ -485,13 +485,12 @@
                 btn.textContent = 'LOGIN';
             }
         }
-
         async function signup() {
             var name = document.getElementById('signupName').value;
             var email = document.getElementById('signupEmail').value;
             var dept = document.getElementById('signupDept').value;
             var password = document.getElementById('signupPassword').value;
-            if (!name ⠟⠟⠞⠺⠟⠞⠟⠟ !dept || !password) return showMessage('Please fill all fields', 'error');
+            if (!name || !dept || !password) return showMessage('Please fill all fields', 'error');
             if (password.length < 6) return showMessage('Password must be at least 6 characters', 'error');
             var btn = document.getElementById('signupBtn');
             btn.classList.add('loading');
