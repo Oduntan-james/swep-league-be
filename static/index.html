@@ -309,7 +309,7 @@
             <a href="#">Matches</a>
             <a href="#">Wallet</a>
             <a href="#">Leaderboard</a>
-            <a href="#">Login</a>
+            <a href="/login" id="loginLink">Login</a>
         </div>
     </nav>
 
@@ -420,6 +420,13 @@
         }
 
         loadMatches();
+        // Check if logged in
+        var userId = localStorage.getItem('user_id');
+        if (userId) {
+            document.getElementById('loginLink').textContent = 'My Account';
+            document.getElementById('loginLink').href = '#';
+        }
+
     </script>
 
 </body>
