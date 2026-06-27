@@ -288,14 +288,14 @@
     async function loadMatches() {
   console.log('Fetching matches...');
   try {
-    const res = await fetch(${API}/matches);
+    const res = await fetch(`${API}/matches`);
     console.log('Response status:', res.status);
     const data = await res.json();
     console.log('Data received:', data);
     renderMatches(data.matches);
      } catch (err) {
   document.getElementById('matchesGrid').innerHTML = 
-    <div class="loading">Error: ${err.message}</div>;
+    '<div class="loading">Error: ' + err.message + '</div>';
 }
     }
 
