@@ -289,10 +289,10 @@
         const res = await fetch(${API}/matches);
         const data = await res.json();
         renderMatches(data.matches);
-      } catch (err) {
-        document.getElementById('matchesGrid').innerHTML = 
-          '<div class="loading">Could not load matches. Try again later.</div>';
-      }
+     } catch (err) {
+  document.getElementById('matchesGrid').innerHTML = 
+    <div class="loading">Error: ${err.message}</div>;
+}
     }
 
     function renderMatches(matches) {
