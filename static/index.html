@@ -1,360 +1,427 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Swep League</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    
-    body {
-      background: #0f0f0f;
-      color: #ffffff;
-      font-family: 'Segoe UI', sans-serif;
-      min-height: 100vh;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swep League</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    /* NAVBAR */
-    .navbar {
-      background: #1a1a1a;
-      padding: 16px 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 2px solid #00ff87;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    .navbar .logo {
-      font-size: 22px;
-      font-weight: 800;
-      color: #00ff87;
-      letter-spacing: 1px;
-    }
-    .navbar .nav-links a {
-      color: #ffffff;
-      text-decoration: none;
-      margin-left: 20px;
-      font-size: 14px;
-      opacity: 0.8;
-    }
-    .navbar .nav-links a:hover { opacity: 1; color: #00ff87; }
+        body {
+            background: #0f0f0f;
+            color: #ffffff;
+            font-family: 'Segoe UI', sans-serif;
+            min-height: 100vh;
+        }
 
-    /* HERO */
-    .hero {
-      text-align: center;
-      padding: 48px 24px 24px;
-    }
-    .hero h1 {
-      font-size: 36px;
-      font-weight: 900;
-      color: #00ff87;
-    }
-    .hero p {
-      color: #aaaaaa;
-      margin-top: 8px;
-      font-size: 15px;
-    }
+        /* NAVBAR */
+        .navbar {
+            background: #1a1a1a;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #00ff87;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-    /* SECTION */
-    .section {
-      padding: 24px;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-    .section-title {
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 16px;
-      color: #00ff87;
-      border-left: 4px solid #00ff87;
-      padding-left: 10px;
-    }
+        .navbar .logo {
+            font-size: 22px;
+            font-weight: 800;
+            color: #00ff87;
+            letter-spacing: 1px;
+        }
 
-    /* MATCH CARD */
-    .matches-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 16px;
-    }
-    .match-card {
-      background: #1a1a1a;
-      border-radius: 12px;
-      padding: 20px;
-      border: 1px solid #2a2a2a;
-      cursor: pointer;
-      transition: border-color 0.2s;
-    }
-    .match-card:hover { border-color: #00ff87; }
+        .navbar .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 14px;
+            opacity: 0.8;
+        }
 
-    .match-teams {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-    .team-name {
-      font-size: 14px;
-      font-weight: 700;
-      text-align: center;
-      flex: 1;
-    }
-    .score {
-      font-size: 28px;
-      font-weight: 900;
-      color: #00ff87;
-      padding: 0 16px;
-    }
-    .match-status {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-    }
-    .status-upcoming { background: #2a2a2a; color: #aaaaaa; }
-    .status-live { background: #00ff8722; color: #00ff87; border: 1px solid #00ff87; }
-    .status-finished { background: #ffffff11; color: #ffffff66; }
+        .navbar .nav-links a:hover {
+            opacity: 1;
+            color: #00ff87;
+        }
 
-    .match-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 12px;
-    }
-    .kickoff-time { font-size: 12px; color: #888888; }
+        /* HERO */
+        .hero {
+            text-align: center;
+            padding: 48px 24px 24px;
+        }
 
-    .predict-btn {
-      background: #00ff87;
-      color: #000000;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 13px;
-      cursor: pointer;
-    }
-    .predict-btn:hover { background: #00cc6a; }
+        .hero h1 {
+            font-size: 36px;
+            font-weight: 900;
+            color: #00ff87;
+        }
 
-    /* LOADING */
-    .loading {
-      text-align: center;
-      color: #888;
-      padding: 40px;
-    }
+        .hero p {
+            color: #aaaaaa;
+            margin-top: 8px;
+            font-size: 15px;
+        }
 
-    /* MODAL */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: #000000cc;
-      z-index: 200;
-      justify-content: center;
-      align-items: center;
-    }
-    .modal-overlay.active { display: flex; }
-    .modal {
-      background: #1a1a1a;
-      border-radius: 16px;
-      padding: 28px;
-      width: 90%;
-      max-width: 420px;
-      border: 1px solid #2a2a2a;
-    }
-    .modal h2 { font-size: 18px; margin-bottom: 20px; color: #00ff87; }
-    .pick-options {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    .pick-btn {
-      padding: 12px 8px;
-      border-radius: 10px;
-      border: 2px solid #2a2a2a;
-      background: #0f0f0f;
-      color: #ffffff;
-      font-weight: 700;
-      font-size: 13px;
-      cursor: pointer;
-      text-align: center;
-    }
-    .pick-btn.selected { border-color: #00ff87; color: #00ff87; }
-    .stake-input {
-      width: 100%;
-      padding: 12px;
-      background: #0f0f0f;
-      border: 1px solid #2a2a2a;
-      border-radius: 8px;
-      color: #ffffff;
-      font-size: 15px;
-      margin-bottom: 16px;
-    }
-    .submit-btn {
-      width: 100%;
-      padding: 14px;
-      background: #00ff87;
-      color: #000;
-      border: none;
-      border-radius: 10px;
-      font-weight: 800;
-      font-size: 15px;
-      cursor: pointer;
-    }
-    .cancel-btn {
-      width: 100%;
-      padding: 12px;
-      background: transparent;
-      color: #888;
-      border: 1px solid #2a2a2a;
-      border-radius: 10px;
-      font-size: 14px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
+        /* SECTION */
+        .section {
+            padding: 24px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
 
-    /* FOOTER */
-    footer {
-      text-align: center;
-      padding: 24px;
-      color: #444;
-      font-size: 13px;
-      border-top: 1px solid #1a1a1a;
-      margin-top: 40px;
-    }
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #00ff87;
+            border-left: 4px solid #00ff87;
+            padding-left: 10px;
+        }
 
-    @media (max-width: 600px) {
-      .hero h1 { font-size: 26px; }
-      .matches-grid { grid-template-columns: 1fr; }
-    }
-  </style>
+        /* MATCH CARD */
+        .matches-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .match-card {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #2a2a2a;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .match-card:hover {
+            border-color: #00ff87;
+        }
+
+        .match-teams {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .team-name {
+            font-size: 14px;
+            font-weight: 700;
+            text-align: center;
+            flex: 1;
+        }
+
+        .score {
+            font-size: 28px;
+            font-weight: 900;
+            color: #00ff87;
+            padding: 0 16px;
+        }
+
+        .match-status {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-upcoming {
+            background: #2a2a2a;
+            color: #aaaaaa;
+        }
+
+        .status-live {
+            background: #00ff8722;
+            color: #00ff87;
+            border: 1px solid #00ff87;
+        }
+
+        .status-finished {
+            background: #ffffff11;
+            color: #ffffff66;
+        }
+
+        .match-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+        }
+
+        .kickoff-time {
+            font-size: 12px;
+            color: #888888;
+        }
+
+        .predict-btn {
+            background: #00ff87;
+            color: #000000;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .predict-btn:hover {
+            background: #00cc6a;
+        }
+
+        /* LOADING */
+        .loading {
+            text-align: center;
+            color: #888;
+            padding: 40px;
+        }
+
+        /* MODAL */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000000cc;
+            z-index: 200;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 28px;
+            width: 90%;
+            max-width: 420px;
+            border: 1px solid #2a2a2a;
+        }
+
+        .modal h2 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #00ff87;
+        }
+
+        .pick-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .pick-btn {
+            padding: 12px 8px;
+            border-radius: 10px;
+            border: 2px solid #2a2a2a;
+            background: #0f0f0f;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .pick-btn.selected {
+            border-color: #00ff87;
+            color: #00ff87;
+        }
+
+        .stake-input {
+            width: 100%;
+            padding: 12px;
+            background: #0f0f0f;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 15px;
+            margin-bottom: 16px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: #00ff87;
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .cancel-btn {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            color: #888;
+            border: 1px solid #2a2a2a;
+            border-radius: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 24px;
+            color: #444;
+            font-size: 13px;
+            border-top: 1px solid #1a1a1a;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 600px) {
+            .hero h1 {
+                font-size: 26px;
+            }
+
+            .matches-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-  <!-- NAVBAR -->
-  <nav class="navbar">
-    <div class="logo">⚽ SWEP LEAGUE</div>
-    <div class="nav-links">
-      <a href="#">Matches</a>
-      <a href="#">Wallet</a>
-      <a href="#">Leaderboard</a>
-      <a href="#">Login</a>
-    </div>
-  </nav>
-
-  <!-- HERO -->
-  <div class="hero">
-    <h1>SWEP LEAGUE</h1>
-    <p>200-Level Engineering Inter-Departmental Predictions</p>
-  </div>
-
-  <!-- MATCHES -->
-  <div class="section">
-    <div class="section-title">Matches</div>
-    <div class="matches-grid" id="matchesGrid">
-      <div class="loading">Loading matches...</div>
-    </div>
-  </div>
-
-  <!-- PREDICT MODAL -->
-  <div class="modal-overlay" id="modalOverlay">
-    <div class="modal">
-      <h2 id="modalTitle">Predict Match</h2>
-      <div class="pick-options">
-        <div class="pick-btn" onclick="selectPick('team_a')" id="pick_team_a">🏆 Team A</div>
-        <div class="pick-btn" onclick="selectPick('draw')" id="pick_draw">🤝 Draw</div>
-        <div class="pick-btn" onclick="selectPick('team_b')" id="pick_team_b">🏆 Team B</div>
-      </div>
-      <input class="stake-input" type="number" id="stakeInput" placeholder="Enter stake amount (₦)" min="100">
-      <button class="submit-btn" onclick="submitPrediction()">Submit Prediction</button>
-      <button class="cancel-btn" onclick="closeModal()">Cancel</button>
-    </div>
-  </div>
-
-  <footer>Swep League © 2026 — 200L Engineering, FUNAAB</footer>
-
-  <script>
-    const API = 'https://swep-league-be.onrender.com';
-    console.log('Loading from:', API);
-    let currentMatchId = null;
-    let selectedPick = null;
-    let currentMatch = null;
-
-    // Load matches on page load
-    async function loadMatches() {
-  console.log('Fetching matches...');
-  try {
-    const res = await fetch(`${API}/matches`);
-    console.log('Response status:', res.status);
-    const data = await res.json();
-    console.log('Data received:', data);
-    renderMatches(data.matches);
-     } catch (err) {
-  document.getElementById('matchesGrid').innerHTML = 
-    '<div class="loading">Error: ' + err.message + '</div>';
-}
-    }
-
-    function renderMatches(matches) {
-      const grid = document.getElementById('matchesGrid');
-      if (!matches || matches.length === 0) {
-        grid.innerHTML = '<div class="loading">No matches scheduled yet.</div>';
-        return;
-      }
-      grid.innerHTML = matches.map(m => `
-        <div class="match-card" onclick="openModal('${m.id}', '${m.team_a?.name}', '${m.team_b?.name}')">
-            <div class="match-teams">
-            <div class="team-name">${m.team_a?.name || 'TBA'}</div>
-            <div class="score">${m.score_a} - ${m.score_b}</div>
-            <div class="team-name">${m.team_b?.name || 'TBA'}</div>
-          </div>
-          <div class="match-footer">
-            <span class="kickoff-time">⏰ ${new Date(m.kickoff_time).toLocaleString()}</span>
-            <span class="match-status status-${m.status}">${m.status}</span>
-          </div>
-          ${m.status === 'upcoming' ? 
-            <button class="predict-btn" style="margin-top:12px;width:100%">Predict Now</button> : ''}
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="logo">⚽ SWEP LEAGUE</div>
+        <div class="nav-links">
+            <a href="#">Matches</a>
+            <a href="#">Wallet</a>
+            <a href="#">Leaderboard</a>
+            <a href="#">Login</a>
         </div>
-      ).join('');
-    }
+    </nav>
 
-    function openModal(matchId, teamA, teamB) {
-      currentMatchId = matchId;
-      selectedPick = null;
-      document.getElementById('modalTitle').textContent = ${teamA} vs ${teamB};
-      document.getElementById('pick_team_a').textContent = 🏆 ${teamA};
-      document.getElementById('pick_team_b').textContent = 🏆 ${teamB};
-      document.querySelectorAll('.pick-btn').forEach(b => b.classList.remove('selected'));
-      document.getElementById('stakeInput').value = '';
-      document.getElementById('modalOverlay').classList.add('active');
-    }
+    <!-- HERO -->
+    <div class="hero">
+        <h1>SWEP LEAGUE</h1>
+        <p>200-Level Engineering Inter-Departmental Predictions</p>
+    </div>
 
-    function closeModal() {
-      document.getElementById('modalOverlay').classList.remove('active');
-    }
+    <!-- MATCHES -->
+    <div class="section">
+        <div class="section-title">Matches</div>
+        <div class="matches-grid" id="matchesGrid">
+            <div class="loading">Loading matches...</div>
+        </div>
+    </div>
 
-    function selectPick(pick) {
-      selectedPick = pick;
-      document.querySelectorAll('.pick-btn').forEach(b => b.classList.remove('selected'));
-      document.getElementById(pick_${pick}).classList.add('selected');
-    }
+    <!-- PREDICT MODAL -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <h2 id="modalTitle">Predict Match</h2>
+            <div class="pick-options">
+                <div class="pick-btn" onclick="selectPick('team_a')" id="pick_team_a">🏆 Team A</div>
+                <div class="pick-btn" onclick="selectPick('draw')" id="pick_draw">🤝 Draw</div>
+                <div class="pick-btn" onclick="selectPick('team_b')" id="pick_team_b">🏆 Team B</div>
+            </div>
+            <input class="stake-input" type="number" id="stakeInput" placeholder="Enter stake amount (₦)" min="100">
+            <button class="submit-btn" onclick="submitPrediction()">Submit Prediction</button>
+            <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
 
-    async function submitPrediction() {
-      if (!selectedPick) return alert('Please select a pick!');
-      const stake = document.getElementById('stakeInput').value;
-      if (!stake || stake < 100) return alert('Minimum stake is ₦100');
-      
-      // For now show success — we'll wire up auth later
-      alert(Prediction submitted! ₦${stake} on ${selectedPick}`);
-      closeModal();
-    }
+    <footer>Swep League © 2026 — 200L Engineering, FUNAAB</footer>
 
-    loadMatches();
-  </script>
+    <script>
+        const API = 'https://swep-league-be.onrender.com';
+        let currentMatchId = null;
+        let selectedPick = null;
+
+        async function loadMatches() {
+            try {
+                const res = await fetch(API + '/matches');
+                const data = await res.json();
+                renderMatches(data.matches);
+            } catch (err) {
+                document.getElementById('matchesGrid').innerHTML =
+                    '<div class="loading">Error: ' + err.message + '</div>';
+            }
+        }
+
+        function renderMatches(matches) {
+            const grid = document.getElementById('matchesGrid');
+            if (!matches || matches.length === 0) {
+                grid.innerHTML = '<div class="loading">No matches scheduled yet.</div>';
+                return;
+            }
+            var html = '';
+            for (var i = 0; i < matches.length; i++) {
+                var m = matches[i];
+                var teamA = m.team_a ? m.team_a.name : 'TBA';
+                var teamB = m.team_b ? m.team_b.name : 'TBA';
+                var kickoff = new Date(m.kickoff_time).toLocaleString();
+                var predictBtn = m.status === 'upcoming' ?
+                    '<button class="predict-btn" style="margin-top:12px;width:100%" onclick="openModal(\'' + m.id + '\',\'' + teamA + '\',\'' + teamB + '\')">Predict Now</button>' : '';
+                html += '<div class="match-card">';
+                html += '<div class="match-teams">';
+                html += '<div class="team-name">' + teamA + '</div>';
+                html += '<div class="score">' + m.score_a + ' - ' + m.score_b + '</div>';
+                html += '<div class="team-name">' + teamB + '</div>';
+                html += '</div>';
+                html += '<div class="match-footer">';
+                html += '<span class="kickoff-time">Kickoff: ' + kickoff + '</span>';
+                html += '<span class="match-status status-' + m.status + '">' + m.status + '</span>';
+                html += '</div>';
+                html += predictBtn;
+                html += '</div>';
+            }
+            grid.innerHTML = html;
+        }
+
+        function openModal(matchId, teamA, teamB) {
+            currentMatchId = matchId;
+            selectedPick = null;
+            document.getElementById('modalTitle').textContent = teamA + ' vs ' + teamB;
+            document.getElementById('pick_team_a').textContent = teamA;
+            document.getElementById('pick_team_b').textContent = teamB;
+            document.querySelectorAll('.pick-btn').forEach(function (b) { b.classList.remove('selected'); });
+            document.getElementById('stakeInput').value = '';
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+        }
+
+        function selectPick(pick) {
+            selectedPick = pick;
+            document.querySelectorAll('.pick-btn').forEach(function (b) { b.classList.remove('selected'); });
+            document.getElementById('pick_' + pick).classList.add('selected');
+        }
+
+        async function submitPrediction() {
+            if (!selectedPick) return alert('Please select a pick!');
+            var stake = document.getElementById('stakeInput').value;
+            if (!stake || stake < 100) return alert('Minimum stake is 100');
+            alert('Prediction submitted! ' + stake + ' on ' + selectedPick);
+            closeModal();
+        }
+
+        loadMatches();
+    </script>
 
 </body>
+
 </html>
