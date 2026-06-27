@@ -22,6 +22,9 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 @app.get("/app")
 def serve_app():
     return FileResponse("static/index.html")
+@app.get("/login")
+def serve_login():
+    return FileResponse("static/login.html")
 supabase = create_client(
     os.getenv("SUPABASE_URL"),
     os.getenv("SUPABASE_KEY")

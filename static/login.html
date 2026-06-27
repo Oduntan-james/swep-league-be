@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swep League - Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a0a;
+            color: #ffffff;
+            font-family: 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* ANIMATED BACKGROUND */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: radial-gradient(ellipse at 20% 50%, #00ff8711 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, #00ff8708 0%, transparent 50%),
+                radial-gradient(ellipse at 60% 80%, #00ff8705 0%, transparent 40%);
+        }
+
+        .bg-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background-image:
+                linear-gradient(rgba(0, 255, 135, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 135, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% {
+                transform: translateY(0);
+            }
+
+            100% {
+                transform: translateY(50px);
+            }
+        }
+
+        /* FLOATING BALLS */
+        .ball {
+            position: fixed;
+            font-size: 24px;
+            opacity: 0.08;
+            animation: float 8s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        .ball:nth-child(1) {
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .ball:nth-child(2) {
+            top: 20%;
+            right: 15%;
+            animation-delay: 2s;
+        }
+
+        .ball:nth-child(3) {
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        .ball:nth-child(4) {
+            bottom: 10%;
+            right: 10%;
+            animation-delay: 6s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+            }
+        }
+
+        /* LOGO */
+        .logo-section {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            margin-bottom: 32px;
+            animation: slideDown 0.6s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo-section .icon {
+            font-size: 48px;
+            display: block;
+            margin-bottom: 8px;
+            animation: spin 3s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+
+            0%,
+            100% {
+                transform: rotate(-10deg);
+            }
+
+            50% {
+                transform: rotate(10deg);
+            }
+        }
+
+        .logo-section h1 {
+            font-size: 32px;
+            font-weight: 900;
+            color: #00ff87;
+            letter-spacing: 4px;
+            text-shadow: 0 0 20px #00ff8755;
+        }
+
+        .logo-section p {
+            font-size: 12px;
+            color: #888;
+            letter-spacing: 2px;
+            margin-top: 4px;
+        }
+
+        /* CARD */
+        .card {
+            position: relative;
+            z-index: 1;
+            background: #111111;
+            border-radius: 20px;
+            padding: 32px;
+            width: 90%;
+            max-width: 420px;
+            border: 1px solid #00ff8733;
+            box-shadow: 0 0 40px #00ff8715, 0 20px 60px #00000080;
+            animation: slideUp 0.6s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            background: #0a0a0a;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 28px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            color: #888;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: #00ff87;
+            color: #000;
+            box-shadow: 0 0 15px #00ff8755;
+        }
+
+        /* FORM */
+        .form-group {
+            margin-bottom: 16px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #00ff87;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 13px 16px;
+            background: #0a0a0a;
+            border: 1px solid #2a2a2a;
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 15px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #00ff87;
+            box-shadow: 0 0 10px #00ff8733;
+        }
+
+        select option {
+            background: #111;
+        }
+
+        /* BUTTON */
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #00ff87, #00cc6a);
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            font-weight: 900;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 8px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px #00ff8744;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s, height 0.4s;
+        }
+
+        .btn:active::after {
+            width: 200px;
+            height: 200px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px #00ff8766;
+        }
+
+        /* MESSAGE */
+        .message {
+            text-align: center;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .message.error {
+            background: #ff444422;
+            color: #ff6666;
+            border: 1px solid #ff444444;
+        }
+
+        .message.success {
+            background: #00ff8722;
+            color: #00ff87;
+            border: 1px solid #00ff8744;
+        }
+
+        /* LOADING SPINNER */
+        .btn.loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .btn.loading::before {
+            content: '';
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #000;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin2 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin2 {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        footer {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            margin-top: 24px;
+            color: #444;
+            font-size: 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Background effects -->
+    <div class="bg-animation"></div>
+    <div class="bg-lines"></div>
+    <div class="ball">⚽</div>
+    <div class="ball">⚽</div>
+    <div class="ball">⚽</div>
+    <div class="ball">⚽</div>
+
+    <!-- Logo -->
+    <div class="logo-section">
+        <span class="icon">⚽</span>
+        <h1>SWEP LEAGUE</h1>
+        <p>200L ENGINEERING · FUNAAB</p>
+    </div>
+
+    <!-- Card -->
+    <div class="card">
+        <div class="tabs">
+            <div class="tab active" id="tab-login" onclick="showTab('login')">Login</div>
+            <div class="tab" id="tab-signup" onclick="showTab('signup')">Sign Up</div>
+        </div>
+
+        <div id="message" class="message"></div>
+
+        <!-- LOGIN -->
+        <div id="loginForm">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="loginEmail" placeholder="your@email.com">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="loginPassword" placeholder="••••••••">
+            </div>
+            <button class="btn" id="loginBtn" onclick="login()">Login</button>
+        </div>
+
+        <!-- SIGNUP -->
+        <div id="signupForm" style="display:none">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="signupName" placeholder="e.g. James Oduntan">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="signupEmail" placeholder="your@email.com">
+            </div>
+            <div class="form-group">
+                <label>Department</label>
+                <select id="signupDept">
+                    <option value="">Select Department</option>
+                    <option value="EEE">Electrical & Electronics Engineering</option>
+                    <option value="MCE">Mechanical Engineering</option>
+                    <option value="CVE">Civil Engineering</option>
+                    <option value="MCT">Mechatronics Engineering</option>
+                    <option value="ABE">Agricultural & Bioresources Engineering</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="signupPassword" placeholder="Min 6 characters">
+            </div>
+            <button class="btn" id="signupBtn" onclick="signup()">Create Account</button>
+        </div>
+    </div>
+
+    <footer>Swep League © 2026 — Powered by FUNAAB Engineers</footer>
+
+    <script>
+        const API = 'https://swep-league-be.onrender.com';
+
+        function showTab(tab) {
+            document.getElementById('tab-login').classList.remove('active');
+            document.getElementById('tab-signup').classList.remove('active');
+            document.getElementById('tab-' + tab).classList.add('active');
+            document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
+            document.getElementById('signupForm').style.display = tab === 'signup' ? 'block' : 'none';
+            document.getElementById('message').style.display = 'none';
+        }
+
+        function showMessage(text, type) {
+            var msg = document.getElementById('message');
+            msg.textContent = text;
+            msg.className = 'message ' + type;
+            msg.style.display = 'block';
+        }
+
+        async function login() {
+            var email = document.getElementById('loginEmail').value;
+            var password = document.getElementById('loginPassword').value;
+            if (!email || !password) return showMessage('Please fill all fields', 'error');
+            var btn = document.getElementById('loginBtn');
+            btn.classList.add('loading');
+            btn.textContent = 'Logging in...';
+            try {
+                var res = await fetch(API + '/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, password: password })
+                });
+                var data = await res.json();
+                if (res.ok) {
+                    localStorage.setItem('token', data.access_token);
+                    localStorage.setItem('user_id', data.user_id);
+                    showMessage('Welcome back! Redirecting...', 'success');
+                    setTimeout(function () { window.location.href = '/app'; }, 1500);
+                } else {
+                    showMessage(data.detail || 'Login failed', 'error');
+                    btn.classList.remove('loading');
+                    btn.textContent = 'LOGIN';
+                }
+            } catch (err) {
+                showMessage('Connection error. Try again.', 'error');
+                btn.classList.remove('loading');
+                btn.textContent = 'LOGIN';
+            }
+        }
+
+        async function signup() {
+            var name = document.getElementById('signupName').value;
+            var email = document.getElementById('signupEmail').value;
+            var dept = document.getElementById('signupDept').value;
+            var password = document.getElementById('signupPassword').value;
+            if (!name ⠟⠟⠞⠺⠟⠞⠟⠟ !dept || !password) return showMessage('Please fill all fields', 'error');
+            if (password.length < 6) return showMessage('Password must be at least 6 characters', 'error');
+            var btn = document.getElementById('signupBtn');
+            btn.classList.add('loading');
+            btn.textContent = 'Creating account...';
+            try {
+                var res = await fetch(API + '/auth/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, password: password, full_name: name, department: dept })
+                });
+                var data = await res.json();
+                if (res.ok) {
+                    showMessage('Account created! Please login.', 'success');
+                    setTimeout(function () { showTab('login'); }, 1500);
+                } else {
+                    showMessage(data.detail || 'Signup failed', 'error');
+                }
+            } catch (err) {
+                showMessage('Connection error. Try again.', 'error');
+            }
+            btn.classList.remove('loading');
+            btn.textContent = 'CREATE ACCOUNT';
+        }
+    </script>
+
+</body>
+
+</html>
