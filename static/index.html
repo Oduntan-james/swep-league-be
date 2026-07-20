@@ -423,8 +423,13 @@
         // Check if logged in
         var userId = localStorage.getItem('user_id');
         if (userId) {
-            document.getElementById('loginLink').textContent = 'My Account';
+            document.getElementById('loginLink').textContent = 'Sign Out';
             document.getElementById('loginLink').href = '#';
+            document.getElementById('loginLink').onclick = function () {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user_id');
+                window.location.href = '/login';
+            };
         }
 
     </script>
