@@ -412,13 +412,36 @@
         }
 
         async function submitPrediction() {
+            var userId = localStorage.getItem('user_id');
+            if (!userId) {
+                window.location.href = '/login';
+                return;
+            }
             if (!selectedPick) return alert('Please select a pick!');
             var stake = document.getElementById('stakeInput').value;
             if (!stake || stake < 100) return alert('Minimum stake is 100');
-            alert('Prediction submitted! ' + stake + ' on ' + selectedPick);
-            closeModal();
+            try {
+                var res = await fetch(API + '/predictions/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_id: userId,
+                        match_id: currentMatchId,
+                        pick: selectedPick,
+                        stake: parseFloat(stake)
+                    })
+                });
+                var data = await res.json();
+                if (res.ok) {
+                    alert('Prediction submitted! Remaining balance: ' + data.remaining_balance);
+                    closeModal();
+                } else {
+                    alert(data.detail || 'Failed to submit prediction');
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
         }
-
         loadMatches();
         // Check if logged in
         var userId = localStorage.getItem('user_id');
