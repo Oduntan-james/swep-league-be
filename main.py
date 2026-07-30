@@ -29,6 +29,9 @@ supabase = create_client(
     os.getenv("SUPABASE_URL"),
     os.getenv("SUPABASE_KEY")
 )
+@app.get("/wallet")
+def serve_wallet():
+    return FileResponse("static/wallet.html")
 
 # --- Models ---
 class SignupRequest(BaseModel):
@@ -438,5 +441,16 @@ def settle_match(data: SettleMatchRequest):
             "payouts": payouts
         }
 
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+@app.get("/wallet/transactions/{user_id}")
+def get_transactions(user_id: str):
+    try:
+        transactions = supabase.table("transactions")\
+            .select("*")\
+            .eq("user_id", user_id)\
+            .order("created_at", desc=True)\
+            .execute()
+        return {"transactions": transactions.data}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

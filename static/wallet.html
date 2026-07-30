@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swep League - Wallet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0f0f0f;
+            color: #ffffff;
+            font-family: 'Segoe UI', sans-serif;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: #1a1a1a;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #00ff87;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar .logo {
+            font-size: 20px;
+            font-weight: 800;
+            color: #00ff87;
+        }
+
+        .navbar .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            margin-left: 16px;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .navbar .nav-links a:hover {
+            color: #00ff87;
+            opacity: 1;
+        }
+
+        .section {
+            padding: 24px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* BALANCE CARD */
+        .balance-card {
+            background: linear-gradient(135deg, #1a1a1a, #0f2a1a);
+            border: 1px solid #00ff8744;
+            border-radius: 20px;
+            padding: 32px;
+            text-align: center;
+            margin-bottom: 24px;
+            box-shadow: 0 0 30px #00ff8715;
+        }
+
+        .balance-label {
+            font-size: 13px;
+            color: #888;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .balance-amount {
+            font-size: 48px;
+            font-weight: 900;
+            color: #00ff87;
+            text-shadow: 0 0 20px #00ff8755;
+        }
+
+        .balance-currency {
+            font-size: 20px;
+            color: #00ff87;
+            margin-right: 4px;
+        }
+
+        .balance-name {
+            font-size: 14px;
+            color: #888;
+            margin-top: 8px;
+        }
+
+        /* SECTION TITLE */
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #00ff87;
+            border-left: 4px solid #00ff87;
+            padding-left: 10px;
+            margin-bottom: 16px;
+        }
+
+        /* DEPOSIT CARD */
+        .deposit-card {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid #2a2a2a;
+        }
+
+        .deposit-card p {
+            color: #aaa;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .bank-details {
+            background: #0f0f0f;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .bank-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .bank-row:last-child {
+            border-bottom: none;
+        }
+
+        .bank-label {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .bank-value {
+            font-size: 14px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .copy-btn {
+            background: #00ff8722;
+            color: #00ff87;
+            border: 1px solid #00ff8744;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .note {
+            background: #00ff8711;
+            border: 1px solid #00ff8733;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 13px;
+            color: #00ff87;
+        }
+
+        /* TRANSACTIONS */
+        .transaction-item {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #2a2a2a;
+        }
+
+        .tx-type {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .tx-deposit {
+            color: #00ff87;
+        }
+
+        .tx-stake {
+            color: #ff8800;
+        }
+
+        .tx-payout {
+            color: #00aaff;
+        }
+
+        .tx-refund {
+            color: #aaaaaa;
+        }
+
+        .tx-date {
+            font-size: 11px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .tx-amount {
+            font-size: 18px;
+            font-weight: 900;
+        }
+
+        .tx-amount.positive {
+            color: #00ff87;
+        }
+
+        .tx-amount.negative {
+            color: #ff4444;
+        }
+
+        .loading {
+            text-align: center;
+            color: #888;
+            padding: 20px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 24px;
+            color: #444;
+            font-size: 13px;
+            border-top: 1px solid #1a1a1a;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="logo">⚽ SWEP LEAGUE</div>
+        <div class="nav-links">
+            <a href="/app">Matches</a>
+            <a href="/wallet">Wallet</a>
+            <a href="/leaderboard">Leaderboard</a>
+            <a href="#" id="loginLink">Login</a>
+        </div>
+    </nav>
+
+    <div class="section">
+
+        <!-- BALANCE -->
+        <div class="balance-card">
+            <div class="balance-label">Your Balance</div>
+            <div class="balance-amount">
+                <span class="balance-currency">₦</span>
+                <span id="balanceAmount">--</span>
+            </div>
+            <div class="balance-name" id="userName">Loading...</div>
+        </div>
+
+        <!-- DEPOSIT -->
+        <div class="section-title">How to Deposit</div>
+        <div class="deposit-card">
+            <p>Send Naira to the account below. Include your registered email as the transfer description so we can
+                credit your account quickly.</p>
+            <div class="bank-details">
+                <div class="bank-row">
+                    <span class="bank-label">Bank</span>
+                    <span class="bank-value">Opay</span>
+                </div>
+                <div class="bank-row">
+                    <span class="bank-label">Account Number</span>
+                    <span class="bank-value" id="accNumber">8058970741</span>
+                    <button class="copy-btn" onclick="copyAccount()">Copy</button>
+                </div>
+                <div class="bank-row">
+                    <span class="bank-label">Account Name</span>
+                    <span class="bank-value">Oreoluwa James Oduntan</span>
+                </div>
+            </div>
+            <div class="note">
+                After payment, send your receipt to our WhatsApp: <strong>08058970741</strong> and your balance will be
+                credited within 5 minutes.
+            </div>
+        </div>
+
+        <!-- TRANSACTIONS -->
+        <div class="section-title">Transaction History</div>
+        <div id="transactionsList">
+            <div class="loading">Loading transactions...</div>
+        </div>
+
+    </div>
+
+    <footer>Swep League © 2026 — 200L Engineering, FUNAAB</footer>
+
+    <script>
+        const API = 'https://swep-league-be.onrender.com';
+
+        var userId = localStorage.getItem('user_id');
+        var token = localStorage.getItem('token');
+
+        // Check login
+        if (!userId) {
+            window.location.href = '/login';
+        }
+
+        // Update nav
+        var loginLink = document.getElementById('loginLink');
+        if (userId) {
+            loginLink.textContent = 'Sign Out';
+            loginLink.onclick = function () {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user_id');
+                window.location.href = '/login';
+            };
+        }
+
+        // Load balance
+        async function loadBalance() {
+            try {
+                var res = await fetch(API + '/wallet/balance/' + userId);
+                var data = await res.json();
+                document.getElementById('balanceAmount').textContent = data.balance.toLocaleString();
+                document.getElementById('userName').textContent = data.full_name;
+            } catch (err) {
+                document.getElementById('balanceAmount').textContent = 'Error';
+            }
+        }
+
+        // Load transactions
+        async function loadTransactions() {
+            try {
+                var res = await fetch(API + '/wallet/transactions/' + userId);
+                var data = await res.json();
+                renderTransactions(data.transactions);
+            } catch (err) {
+                document.getElementById('transactionsList').innerHTML = '<div class="loading">Could not load transactions.</div>';
+            }
+        }
+
+        function renderTransactions(transactions) {
+            var list = document.getElementById('transactionsList');
+            if (!transactions || transactions.length === 0) {
+                list.innerHTML = '<div class="loading">No transactions yet.</div>';
+                return;
+            }
+            var html = '';
+            for (var i = 0; i < transactions.length; i++) {
+                var tx = transactions[i];
+                var isPositive = tx.type === 'deposit' || tx.type === 'payout' || tx.type === 'refund';
+                var sign = isPositive ? '+' : '-';
+                var date = new Date(tx.created_at).toLocaleString();
+                html += '<div class="transaction-item">';
+                html += '<div>';
+                html += '<div class="tx-type tx-' + tx.type + '">' + tx.type + '</div>';
+                html += '<div class="tx-date">' + date + '</div>';
+                html += '</div>';
+                html += '<div class="tx-amount ' + (isPositive ? 'positive' : 'negative') + '">' + sign + '₦' + tx.amount.toLocaleString() + '</div>';
+                html += '</div>';
+            }
+            list.innerHTML = html;
+        }
+
+        function copyAccount() {
+            navigator.clipboard.writeText('8058970741');
+            alert('Account number copied!');
+        }
+
+        loadBalance();
+        loadTransactions();
+    </script>
+
+</body>
+
+</html>
