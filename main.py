@@ -454,3 +454,17 @@ def get_transactions(user_id: str):
         return {"transactions": transactions.data}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+@app.get("/leaderboard")
+def serve_leaderboard():
+    return FileResponse("static/leaderboard.html")
+
+@app.get("/leaderboard/data")
+def get_leaderboard():
+    try:
+        users = supabase.table("users")\
+            .select("id, full_name, department, wallet_balance")\
+            .order("wallet_balance", desc=True)\
+            .execute()
+        return {"leaderboard": users.data}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swep League - Leaderboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0f0f0f;
+            color: #ffffff;
+            font-family: 'Segoe UI', sans-serif;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: #1a1a1a;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #00ff87;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar .logo {
+            font-size: 20px;
+            font-weight: 800;
+            color: #00ff87;
+        }
+
+        .navbar .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            margin-left: 16px;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .navbar .nav-links a:hover {
+            color: #00ff87;
+            opacity: 1;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 32px 24px 16px;
+        }
+
+        .hero h1 {
+            font-size: 28px;
+            font-weight: 900;
+            color: #00ff87;
+            text-shadow: 0 0 20px #00ff8755;
+        }
+
+        .hero p {
+            color: #888;
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        .section {
+            padding: 24px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .top3 {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .podium {
+            text-align: center;
+            flex: 1;
+        }
+
+        .podium-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin: 0 auto 8px;
+            font-weight: 900;
+        }
+
+        .podium-1 .podium-avatar {
+            background: #ffd70033;
+            border: 2px solid #ffd700;
+            color: #ffd700;
+            width: 68px;
+            height: 68px;
+            font-size: 26px;
+        }
+
+        .podium-2 .podium-avatar {
+            background: #c0c0c033;
+            border: 2px solid #c0c0c0;
+            color: #c0c0c0;
+        }
+
+        .podium-3 .podium-avatar {
+            background: #cd7f3233;
+            border: 2px solid #cd7f32;
+            color: #cd7f32;
+        }
+
+        .podium-name {
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .podium-balance {
+            font-size: 13px;
+            color: #00ff87;
+            font-weight: 700;
+        }
+
+        .podium-rank {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .podium-bar {
+            border-radius: 8px 8px 0 0;
+            margin-top: 8px;
+        }
+
+        .podium-1 .podium-bar {
+            height: 60px;
+            background: #ffd70022;
+            border: 1px solid #ffd70044;
+        }
+
+        .podium-2 .podium-bar {
+            height: 40px;
+            background: #c0c0c022;
+            border: 1px solid #c0c0c044;
+        }
+
+        .podium-3 .podium-bar {
+            height: 24px;
+            background: #cd7f3222;
+            border: 1px solid #cd7f3244;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #00ff87;
+            border-left: 4px solid #00ff87;
+            padding-left: 10px;
+            margin-bottom: 16px;
+        }
+
+        .leaderboard-item {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border: 1px solid #2a2a2a;
+            transition: border-color 0.2s;
+        }
+
+        .leaderboard-item:hover {
+            border-color: #00ff8744;
+        }
+
+        .leaderboard-item.current-user {
+            border-color: #00ff87;
+            background: #00ff8708;
+        }
+
+        .rank-badge {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .rank-1 {
+            background: #ffd70022;
+            color: #ffd700;
+            border: 1px solid #ffd700;
+        }
+
+        .rank-2 {
+            background: #c0c0c022;
+            color: #c0c0c0;
+            border: 1px solid #c0c0c0;
+        }
+
+        .rank-3 {
+            background: #cd7f3222;
+            color: #cd7f32;
+            border: 1px solid #cd7f32;
+        }
+
+        .rank-other {
+            background: #2a2a2a;
+            color: #888;
+        }
+
+        .player-info {
+            flex: 1;
+        }
+
+        .player-name {
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .player-dept {
+            font-size: 12px;
+            color: #888;
+            margin-top: 2px;
+        }
+
+        .player-balance {
+            font-size: 18px;
+            font-weight: 900;
+            color: #00ff87;
+        }
+
+        .loading {
+            text-align: center;
+            color: #888;
+            padding: 40px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 24px;
+            color: #444;
+            font-size: 13px;
+            border-top: 1px solid #1a1a1a;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="logo">⚽ SWEP LEAGUE</div>
+        <div class="nav-links">
+            <a href="/app">Matches</a>
+            <a href="/wallet">Wallet</a>
+            <a href="/leaderboard">Leaderboard</a>
+            <a href="#" id="loginLink">Login</a>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <h1>🏆 Leaderboard</h1>
+        <p>Top predictors of the SWEP League</p>
+    </div>
+
+    <div class="section">
+        <div class="top3" id="top3">
+            <div class="loading">Loading...</div>
+        </div>
+        <div class="section-title">All Players</div>
+        <div id="leaderboardList">
+            <div class="loading">Loading leaderboard...</div>
+        </div>
+    </div>
+
+    <footer>Swep League © 2026 — 200L Engineering, FUNAAB</footer>
+
+    <script>
+        const API = 'https://swep-league-be.onrender.com';
+        var currentUserId = localStorage.getItem('user_id');
+
+        var loginLink = document.getElementById('loginLink');
+        if (currentUserId) {
+            loginLink.textContent = 'Sign Out';
+            loginLink.onclick = function () {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user_id');
+                window.location.href = '/login';
+            };
+        } else {
+            loginLink.href = '/login';
+        }
+
+        async function loadLeaderboard() {
+            try {
+                var res = await fetch(API + '/leaderboard/data');
+                var data = await res.json();
+                renderTop3(data.leaderboard);
+                renderList(data.leaderboard);
+            } catch (err) {
+                document.getElementById('leaderboardList').innerHTML = '<div class="loading">Could not load leaderboard.</div>';
+                document.getElementById('top3').innerHTML = '';
+            }
+        }
+
+        function getInitials(name) {
+            var parts = name.split(' ');
+            if (parts.length >= 2) return parts[0][0] + parts[1][0];
+            return name[0];
+        }
+
+        function renderTop3(players) {
+            var top3div = document.getElementById('top3');
+            if (!players || players.length === 0) {
+                top3div.innerHTML = '';
+                return;
+            }
+            var order = [1, 0, 2];
+            var classes = ['podium-2', 'podium-1', 'podium-3'];
+            var ranks = ['silver', 'gold', 'bronze'];
+            var medals = ['silver', 'gold', 'bronze'];
+            var html = '';
+            for (var i = 0; i < 3; i++) {
+                var idx = order[i];
+                if (idx >= players.length) continue;
+                var p = players[idx];
+                html += '<div class="podium ' + classes[i] + '">';
+                html += '<div class="podium-rank">' + (idx + 1) + '</div>';
+                html += '<div class="podium-avatar">' + getInitials(p.full_name).toUpperCase() + '</div>';
+                html += '<div class="podium-name">' + p.full_name.split(' ')[0] + '</div>';
+                html += '<div class="podium-balance">N' + p.wallet_balance.toLocaleString() + '</div>';
+                html += '<div class="podium-bar"></div>';
+                html += '</div>';
+            }
+            top3div.innerHTML = html;
+        }
+
+        function renderList(players) {
+            var list = document.getElementById('leaderboardList');
+            if (!players || players.length === 0) {
+                list.innerHTML = '<div class="loading">No players yet.</div>';
+                return;
+            }
+            var html = '';
+            for (var i = 0; i < players.length; i++) {
+                var p = players[i];
+                var rankClass = i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : 'rank-other';
+                var isCurrent = p.id === currentUserId ? ' current-user' : '';
+                html += '<div class="leaderboard-item' + isCurrent + '">';
+                html += '<div class="rank-badge ' + rankClass + '">' + (i + 1) + '</div>';
+                html += '<div class="player-info">';
+                html += '<div class="player-name">' + p.full_name + (p.id === currentUserId ? ' (You)' : '') + '</div>';
+                html += '<div class="player-dept">' + p.department + '</div>';
+                html += '</div>';
+                html += '<div class="player-balance">N' + p.wallet_balance.toLocaleString() + '</div>';
+                html += '</div>';
+            }
+            list.innerHTML = html;
+        }
+
+        loadLeaderboard();
+    </script>
+
+</body>
+
+</html>
