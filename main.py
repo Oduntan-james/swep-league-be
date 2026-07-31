@@ -468,3 +468,18 @@ def get_leaderboard():
         return {"leaderboard": users.data}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+@app.get("/admin")
+def serve_admin():
+    return FileResponse("static/admin.html")
+
+@app.get("/admin/user-by-email")
+def get_user_by_email(email: str):
+    try:
+        user = supabase.table("users")\
+            .select("id")\
+            .eq("email", email)\
+            .single()\
+            .execute()
+        return {"user_id": user.data["id"]}
+    except Exception as e:
+        raise HTTPException(status_code=404, detail="User not found")

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swep League - Admin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a0a;
+            color: #ffffff;
+            font-family: 'Segoe UI', sans-serif;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: #1a1a1a;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #ff4444;
+        }
+
+        .navbar .logo {
+            font-size: 20px;
+            font-weight: 800;
+            color: #ff4444;
+        }
+
+        .navbar .badge {
+            background: #ff444422;
+            color: #ff4444;
+            border: 1px solid #ff4444;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .section {
+            padding: 24px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid #2a2a2a;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #00ff87;
+            border-left: 4px solid #00ff87;
+            padding-left: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            background: #0a0a0a;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 14px;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #00ff87;
+        }
+
+        select option {
+            background: #1a1a1a;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 14px;
+            cursor: pointer;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        .btn-green {
+            background: #00ff87;
+            color: #000;
+        }
+
+        .btn-green:hover {
+            background: #00cc6a;
+        }
+
+        .btn-red {
+            background: #ff4444;
+            color: #fff;
+        }
+
+        .btn-red:hover {
+            background: #cc3333;
+        }
+
+        .btn-blue {
+            background: #0088ff;
+            color: #fff;
+        }
+
+        .btn-blue:hover {
+            background: #0066cc;
+        }
+
+        .btn-orange {
+            background: #ff8800;
+            color: #fff;
+        }
+
+        .btn-orange:hover {
+            background: #cc6600;
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 12px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .message.success {
+            background: #00ff8722;
+            color: #00ff87;
+            border: 1px solid #00ff8744;
+        }
+
+        .message.error {
+            background: #ff444422;
+            color: #ff6666;
+            border: 1px solid #ff444444;
+        }
+
+        .match-option {
+            padding: 10px;
+            background: #0a0a0a;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: #888;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="logo">⚙️ ADMIN PANEL</div>
+        <div class="badge">SWEP LEAGUE</div>
+    </nav>
+
+    <div class="section">
+
+        <!-- CREDIT BALANCE -->
+        <div class="card">
+            <div class="card-title">💰 Credit User Balance</div>
+            <div class="form-group">
+                <label>User Email</label>
+                <input type="email" id="creditEmail" placeholder="user@email.com">
+            </div>
+            <div class="form-group">
+                <label>Amount (₦)</label>
+                <input type="number" id="creditAmount" placeholder="e.g. 2000">
+            </div>
+            <button class="btn btn-green" onclick="creditUser()">Credit Balance</button>
+            <div class="message" id="creditMsg"></div>
+        </div>
+
+        <!-- CREATE MATCH -->
+        <div class="card">
+            <div class="card-title">⚽ Create Match</div>
+            <div class="form-group">
+                <label>Team A</label>
+                <select id="teamA">
+                    <option value="Electrical Engineering">Electrical Engineering</option>
+                    <option value="Mechanical Engineering">Mechanical Engineering</option>
+                    <option value="Civil Engineering">Civil Engineering</option>
+                    <option value="Mechatronics Engineering">Mechatronics Engineering</option>
+                    <option value="Agricultural Engineering">Agricultural Engineering</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Team B</label>
+                <select id="teamB">
+                    <option value="Mechanical Engineering">Mechanical Engineering</option>
+                    <option value="Electrical Engineering">Electrical Engineering</option>
+                    <option value="Civil Engineering">Civil Engineering</option>
+                    <option value="Mechatronics Engineering">Mechatronics Engineering</option>
+                    <option value="Agricultural Engineering">Agricultural Engineering</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Kickoff Date & Time</label>
+                <input type="datetime-local" id="kickoffTime">
+            </div>
+            <button class="btn btn-blue" onclick="createMatch()">Create Match</button>
+            <div class="message" id="createMatchMsg"></div>
+        </div>
+
+        <!-- UPDATE SCORE -->
+        <div class="card">
+            <div class="card-title">📊 Update Live Score</div>
+            <div class="form-group">
+                <label>Match</label>
+                <select id="scoreMatchId"></select>
+            </div>
+            <div class="form-group">
+                <label>Score A</label>
+                <input type="number" id="scoreA" value="0" min="0">
+            </div>
+            <div class="form-group">
+                <label>Score B</label>
+                <input type="number" id="scoreB" value="0" min="0">
+            </div>
+            <div class="form-group">
+                <label>Status</label>
+                <select id="matchStatus">
+                    <option value="upcoming">Upcoming</option>
+                    <option value="live">Live</option>
+                    <option value="finished">Finished</option>
+                </select>
+            </div>
+            <button class="btn btn-orange" onclick="updateScore()">Update Score</button>
+            <div class="message" id="scoreMsg"></div>
+        </div>
+
+        <!-- SETTLE MATCH -->
+        <div class="card">
+            <div class="card-title">🏆 Settle Match</div>
+            <div class="form-group">
+                <label>Match</label>
+                <select id="settleMatchId"></select>
+            </div>
+            <div class="form-group">
+                <label>Result</label>
+                <select id="settleResult">
+                    <option value="team_a">Team A Wins</option>
+                    <option value="draw">Draw</option>
+                    <option value="team_b">Team B Wins</option>
+                </select>
+            </div>
+            <button class="btn btn-red" onclick="settleMatch()">Settle & Pay Winners</button>
+            <div class="message" id="settleMsg"></div>
+        </div>
+
+    </div>
+
+    <script>
+        const API = 'https://swep-league-be.onrender.com';
+
+        function showMsg(id, text, type) {
+            var el = document.getElementById(id);
+            el.textContent = text;
+            el.className = 'message ' + type;
+            el.style.display = 'block';
+        }
+
+        async function creditUser() {
+            var email = document.getElementById('creditEmail').value;
+            var amount = document.getElementById('creditAmount').value;
+            if (!email || !amount) return showMsg('creditMsg', 'Fill all fields', 'error');
+            try {
+                var userRes = await fetch(API + '/admin/user-by-email?email=' + encodeURIComponent(email));
+                var userData = await userRes.json();
+                if (!userRes.ok) return showMsg('creditMsg', 'User not found', 'error');
+                var res = await fetch(API + '/wallet/deposit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userData.user_id, amount: parseFloat(amount) })
+                });
+                var data = await res.json();
+                if (res.ok) {
+                    showMsg('creditMsg', 'Credited! New balance: N' + data.new_balance, 'success');
+                } else {
+                    showMsg('creditMsg', data.detail || 'Failed', 'error');
+                }
+            } catch (err) {
+                showMsg('creditMsg', 'Error: ' + err.message, 'error');
+            }
+        }
+
+        async function createMatch() {
+            var teamA = document.getElementById('teamA').value;
+            var teamB = document.getElementById('teamB').value;
+            var kickoff = document.getElementById('kickoffTime').value;
+            if (!kickoff) return showMsg('createMatchMsg', 'Set kickoff time', 'error');
+            if (teamA === teamB) return showMsg('createMatchMsg', 'Teams must be different', 'error');
+            try {
+                var res = await fetch(API + '/matches/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ team_a: teamA, team_b: teamB, kickoff_time: kickoff })
+                });
+                var data = await res.json();
+                if (res.ok) {
+                    showMsg('createMatchMsg', 'Match created! ID: ' + data.match_id, 'success');
+                    loadMatches();
+                } else {
+                    showMsg('createMatchMsg', data.detail || 'Failed', 'error');
+                }
+            } catch (err) {
+                showMsg('createMatchMsg', 'Error: ' + err.message, 'error');
+            }
+        }
+
+        async function updateScore() {
+            var matchId = document.getElementById('scoreMatchId').value;
+            var scoreA = document.getElementById('scoreA').value;
+            var scoreB = document.getElementById('scoreB').value;
+            var status = document.getElementById('matchStatus').value;
+            if (!matchId) return showMsg('scoreMsg', 'Select a match', 'error');
+            try {
+                var res = await fetch(API + '/matches/update-score', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ match_id: matchId, score_a: parseInt(scoreA), score_b: parseInt(scoreB), status: status })
+                });
+                var data = await res.json();
+                if (res.ok) {
+                    showMsg('scoreMsg', 'Score updated: ' + data.score, 'success');
+                } else {
+                    showMsg('scoreMsg', data.detail || 'Failed', 'error');
+                }
+            } catch (err) {
+                showMsg('scoreMsg', 'Error: ' + err.message, 'error');
+            }
+        }
+
+        async function settleMatch() {
+            var matchId = document.getElementById('settleMatchId').value;
+            var result = document.getElementById('settleResult').value;
+            if (!matchId) return showMsg('settleMsg', 'Select a match', 'error');
+            try {
+                var res = await fetch(API + '/matches/settle', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ match_id: matchId, result: result })
+                });
+                var data = await res.json();
+                if (res.ok) {
+                    showMsg('settleMsg', 'Settled! Winners: ' + data.winners + ' Pool: N' + data.total_pool, 'success');
+                } else {
+                    showMsg('settleMsg', data.detail || 'Failed', 'error');
+                }
+            } catch (err) {
+                showMsg('settleMsg', 'Error: ' + err.message, 'error');
+            }
+        }
+
+        async function loadMatches() {
+            try {
+                var res = await fetch(API + '/matches');
+                var data = await res.json();
+                var scoreSelect = document.getElementById('scoreMatchId');
+                var settleSelect = document.getElementById('settleMatchId');
+                scoreSelect.innerHTML = '';
+                settleSelect.innerHTML = '';
+                data.matches.forEach(function (m) {
+                    var label = (m.team_a ? m.team_a.name : 'Team A') + ' vs ' + (m.team_b ? m.team_b.name : 'Team B') + ' (' + m.status + ')';
+                    var opt1 = '<option value="' + m.id + '">' + label + '</option>';
+                    scoreSelect.innerHTML += opt1;
+                    settleSelect.innerHTML += opt1;
+                });
+            } catch (err) {
+                console.log('Could not load matches');
+            }
+        }
+
+        loadMatches();
+    </script>
+
+</body>
+
+</html>
