@@ -483,3 +483,105 @@ def get_user_by_email(email: str):
         return {"user_id": user.data["id"]}
     except Exception as e:
         raise HTTPException(status_code=404, detail="User not found")
+# --- Withdrawal Models ---
+class WithdrawalRequest(BaseModel):
+    user_id: str
+    amount: float
+    bank_name: str
+    account_number: str
+    account_name: str
+
+class ApproveWithdrawalRequest(BaseModel):
+    withdrawal_id: str
+    user_id: str
+    amount: float
+
+# --- Withdrawal Routes ---
+@app.post("/wallet/withdraw")
+def request_withdrawal(data: WithdrawalRequest):
+    try:
+        # Check user has enough balance
+        user = supabase.table("users")\
+            .select("wallet_balance")\
+            .eq("id", data.user_id)\
+            .single()\
+            .execute()
+
+        if user.data["wallet_balance"] < data.amount:
+            raise HTTPException(status_code=400, detail="Insufficient balance")
+
+        # Create withdrawal request
+        withdrawal = supabase.table("withdrawal_requests").insert({
+            "user_id": data.user_id,
+            "amount": data.amount,
+            "bank_name": data.bank_name,
+            "account_number": data.account_number,
+            "account_name": data.account_name,
+            "status": "pending"
+        }).execute()
+
+        return {
+            "message": "Withdrawal request submitted",
+            "withdrawal_id": withdrawal.data[0]["id"]
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/admin/withdrawals")
+def get_withdrawals():
+    try:
+        withdrawals = supabase.table("withdrawal_requests")\
+            .select("*, users(full_name, email)")\
+            .eq("status", "pending")\
+            .order("created_at", desc=True)\
+            .execute()
+        return {"withdrawals": withdrawals.data}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/admin/approve-withdrawal")
+def approve_withdrawal(data: ApproveWithdrawalRequest):
+    try:
+        # Deduct balance
+        user = supabase.table("users")\
+            .select("wallet_balance")\
+            .eq("id", data.user_id)\
+            .single()\
+            .execute()
+
+        new_balance = user.data["wallet_balance"] - data.amount
+
+        supabase.table("users")\
+            .update({"wallet_balance": new_balance})\
+            .eq("id", data.user_id)\
+            .execute()
+
+        # Mark withdrawal as approved
+        supabase.table("withdrawal_requests")\
+            .update({"status": "approved"})\
+            .eq("id", data.withdrawal_id)\
+            .execute()
+
+        # Log transaction
+        supabase.table("transactions").insert({
+            "user_id": data.user_id,
+            "type": "withdrawal",
+            "amount": data.amount
+        }).execute()
+
+        return {"message": "Withdrawal approved", "new_balance": new_balance}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/admin/reject-withdrawal")
+def reject_withdrawal(data: ApproveWithdrawalRequest):
+    try:
+        supabase.table("withdrawal_requests")\
+            .update({"status": "rejected"})\
+            .eq("id", data.withdrawal_id)\
+            .execute()
+        return {"message": "Withdrawal rejected"}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))

@@ -281,6 +281,13 @@
             <button class="btn btn-red" onclick="settleMatch()">Settle & Pay Winners</button>
             <div class="message" id="settleMsg"></div>
         </div>
+        <!-- PENDING WITHDRAWALS -->
+        <div class="card">
+            <div class="card-title">💸 Pending Withdrawals</div>
+            <div id="withdrawalsList">
+                <div style="color:#888;font-size:14px">Loading...</div>
+            </div>
+        </div>
 
     </div>
 
@@ -385,6 +392,70 @@
                 showMsg('settleMsg', 'Error: ' + err.message, 'error');
             }
         }
+        async function loadWithdrawals() {
+            try {
+                var res = await fetch(API + '/admin/withdrawals');
+                var data = await res.json();
+                var list = document.getElementById('withdrawalsList');
+                if (!data.withdrawals || data.withdrawals.length === 0) {
+                    list.innerHTML = '<div style="color:#888;font-size:14px">No pending withdrawals.</div>';
+                    return;
+                }
+                var html = '';
+                data.withdrawals.forEach(function (w) {
+                    html += '<div style="background:#0a0a0a;border-radius:10px;padding:16px;margin-bottom:12px;border:1px solid #2a2a2a">';
+                    html += '<div style="font-weight:700;margin-bottom:4px">' + w.users.full_name + ' (' + w.users.email + ')</div>';
+                    html += '<div style="color:#888;font-size:13px;margin-bottom:8px">Bank: ' + w.bank_name + ' | Acc: ' + w.account_number + ' | Name: ' + w.account_name + '</div>';
+                    html += '<div style="color:#00ff87;font-weight:900;font-size:18px;margin-bottom:12px">N' + w.amount.toLocaleString() + '</div>';
+                    html += '<div style="display:flex;gap:10px">';
+                    html += '<button onclick="approveWithdrawal(\'' + w.id + '\',\'' + w.user_id + '\',' + w.amount + ')" style="flex:1;padding:10px;background:#00ff87;color:#000;border:none;border-radius:8px;font-weight:800;cursor:pointer">Approve</button>';
+                    html += '<button onclick="rejectWithdrawal(\'' + w.id + '\',\'' + w.user_id + '\',' + w.amount + ')" style="flex:1;padding:10px;background:#ff4444;color:#fff;border:none;border-radius:8px;font-weight:800;cursor:pointer">Reject</button>';
+                    html += '</div>';
+                    html += '</div>';
+                });
+                list.innerHTML = html;
+            } catch (err) {
+                document.getElementById('withdrawalsList').innerHTML = '<div style="color:#ff4444">Error loading withdrawals</div>';
+            }
+        }
+
+        async function approveWithdrawal(withdrawalId, userId, amount) {
+            try {
+                var res = await fetch(API + '/admin/approve-withdrawal', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ withdrawal_id: withdrawalId, user_id: userId, amount: amount })
+                });
+                var data = await res.json();
+                if (res.ok) {
+                    alert('Approved! New balance: N' + data.new_balance);
+                    loadWithdrawals();
+                } else {
+                    alert(data.detail || 'Failed');
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+        }
+
+        async function rejectWithdrawal(withdrawalId, userId, amount) {
+            try {
+                var res = await fetch(API + '/admin/reject-withdrawal', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ withdrawal_id: withdrawalId, user_id: userId, amount: amount })
+                });
+                var data = await res.json();
+                if (res.ok) {
+                    alert('Withdrawal rejected');
+                    loadWithdrawals();
+                } else {
+                    alert(data.detail || 'Failed');
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+        }
 
         async function loadMatches() {
             try {
@@ -406,6 +477,7 @@
         }
 
         loadMatches();
+        loadWithdrawals();
     </script>
 
 </body>

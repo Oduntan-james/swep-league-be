@@ -289,6 +289,45 @@
                 credited within 5 minutes.
             </div>
         </div>
+        <!-- WITHDRAW -->
+        <div class="section-title">Withdraw Funds</div>
+        <div class="deposit-card">
+            <p>Enter your bank details and amount to request a withdrawal. You will receive your funds within 30
+                minutes.</p>
+            <div class="form-group" style="margin-bottom:14px">
+                <label
+                    style="font-size:12px;color:#888;display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Amount
+                    (₦)</label>
+                <input type="number" id="withdrawAmount" placeholder="e.g. 1000"
+                    style="width:100%;padding:12px;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:8px;color:#fff;font-size:14px">
+            </div>
+            <div class="form-group" style="margin-bottom:14px">
+                <label
+                    style="font-size:12px;color:#888;display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Bank
+                    Name</label>
+                <input type="text" id="withdrawBank" placeholder="e.g. Opay, GTBank"
+                    style="width:100%;padding:12px;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:8px;color:#fff;font-size:14px">
+            </div>
+            <div class="form-group" style="margin-bottom:14px">
+                <label
+                    style="font-size:12px;color:#888;display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Account
+                    Number</label>
+                <input type="text" id="withdrawAccNumber" placeholder="10-digit account number"
+                    style="width:100%;padding:12px;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:8px;color:#fff;font-size:14px">
+            </div>
+            <div class="form-group" style="margin-bottom:14px">
+                <label
+                    style="font-size:12px;color:#888;display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Account
+                    Name</label>
+                <input type="text" id="withdrawAccName" placeholder="Your account name"
+                    style="width:100%;padding:12px;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:8px;color:#fff;font-size:14px">
+            </div>
+            <button onclick="requestWithdrawal()"
+                style="width:100%;padding:14px;background:#ff4444;color:#fff;border:none;border-radius:10px;font-weight:800;font-size:15px;cursor:pointer;text-transform:uppercase;letter-spacing:1px">Request
+                Withdrawal</button>
+            <div id="withdrawMsg" style="display:none;padding:12px;border-radius:8px;margin-top:12px;font-size:14px">
+            </div>
+        </div>
 
         <!-- TRANSACTIONS -->
         <div class="section-title">Transaction History</div>
@@ -375,6 +414,54 @@
 
         loadBalance();
         loadTransactions();
+        async function requestWithdrawal() {
+            var amount = document.getElementById('withdrawAmount').value;
+            var bank = document.getElementById('withdrawBank').value;
+            var accNumber = document.getElementById('withdrawAccNumber').value;
+            var accName = document.getElementById('withdrawAccName').value;
+
+            if (!amount || !bank || !accNumber || !accName) {
+                var msg = document.getElementById('withdrawMsg');
+                msg.textContent = 'Please fill all fields';
+                msg.style.display = 'block';
+                msg.style.background = '#ff444422';
+                msg.style.color = '#ff6666';
+                msg.style.border = '1px solid #ff444444';
+                return;
+            }
+
+            try {
+                var res = await fetch(API + '/wallet/withdraw', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_id: userId,
+                        amount: parseFloat(amount),
+                        bank_name: bank,
+                        account_number: accNumber,
+                        account_name: accName
+                    })
+                });
+                var data = await res.json();
+                var msg = document.getElementById('withdrawMsg');
+                msg.style.display = 'block';
+                if (res.ok) {
+                    msg.textContent = 'Withdrawal request submitted! You will receive funds within 30 minutes.';
+                    msg.style.background = '#00ff8722';
+                    msg.style.color = '#00ff87';
+                    msg.style.border = '1px solid #00ff8744';
+                } else {
+                    msg.textContent = data.detail || 'Failed';
+                    msg.style.background = '#ff444422';
+                    msg.style.color = '#ff6666';
+                    msg.style.border = '1px solid #ff444444';
+                }
+            } catch (err) {
+                var msg = document.getElementById('withdrawMsg');
+                msg.textContent = 'Error: ' + err.message;
+                msg.style.display = 'block';
+            }
+        }
     </script>
 
 </body>
