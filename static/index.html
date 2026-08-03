@@ -312,6 +312,25 @@
             <a href="/login" id="loginLink">Login</a>
         </div>
     </nav>
+    <!-- WINNER TICKER -->
+    <div id="winnerTicker"
+        style="background:#00ff8715;border-bottom:1px solid #00ff8733;padding:10px 0;overflow:hidden;display:none">
+        <div id="tickerContent"
+            style="display:flex;align-items:center;white-space:nowrap;animation:ticker 30s linear infinite">
+        </div>
+    </div>
+
+    <style>
+        @keyframes ticker {
+            0% {
+                transform: translateX(100vw);
+            }
+
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+    </style>
 
     <!-- HERO -->
     <div class="hero">
@@ -442,7 +461,28 @@
                 alert('Error: ' + err.message);
             }
         }
+        async function loadWinnerTicker() {
+            try {
+                var res = await fetch(API + '/recent-winners');
+                var data = await res.json();
+                if (!data.winners || data.winners.length === 0) return;
+                var ticker = document.getElementById('winnerTicker');
+                var content = document.getElementById('tickerContent');
+                var html = '';
+                data.winners.forEach(function (w) {
+                    var email = w.email;
+                    var parts = email.split('@');
+                    var masked = parts[0].substring(0, 6) + '*****@' + parts[1];
+                    html += '<span style="margin-right:48px;font-size:13px;font-weight:700;color:#00ff87">🏆 ' + masked + ' won ₦' + w.amount.toLocaleString() + '</span>';
+                });
+                content.innerHTML = html + html;
+                ticker.style.display = 'block';
+            } catch (err) {
+                console.log('Ticker error: ' + err.message);
+            }
+        }
         loadMatches();
+        loadWinnerTicker();
         // Check if logged in
         var userId = localStorage.getItem('user_id');
         if (userId) {

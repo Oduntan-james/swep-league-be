@@ -587,3 +587,24 @@ def reject_withdrawal(data: ApproveWithdrawalRequest):
         return {"message": "Withdrawal rejected"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+    @app.get("/recent-winners")
+def get_recent_winners():
+    try:
+        winners = supabase.table("transactions")\
+            .select("amount, user_id, users(email)")\
+            .eq("type", "payout")\
+            .order("created_at", desc=True)\
+            .limit(10)\
+            .execute()
+        
+        result = []
+        for w in winners.data:
+            if w.get("users") and w["amount"] > 0:
+                result.append({
+                    "email": w["users"]["email"],
+                    "amount": w["amount"]
+                })
+        
+        return {"winners": result}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
