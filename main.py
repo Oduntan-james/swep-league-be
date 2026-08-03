@@ -347,6 +347,8 @@ def settle_match(data: SettleMatchRequest):
 
         # Calculate total pool
         total_pool = sum(p["stake"] for p in all_predictions.data)
+        platform_fee = total_pool*0.2 #20% cut
+        total_pool_after_fee = total_pool - platform_fee
 
         # Get winning predictions
         winners = [p for p in all_predictions.data if p["pick"] == data.result]
@@ -392,7 +394,7 @@ def settle_match(data: SettleMatchRequest):
         # Pay out winners
         payouts = []
         for p in winners:
-            payout = (p["stake"] / winning_pool) * total_pool
+            payout = (p["stake"] / winning_pool) * total_pool_after_fee
 
             user = supabase.table("users")\
                 .select("wallet_balance")\
