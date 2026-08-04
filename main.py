@@ -608,3 +608,32 @@ def get_recent_winners():
         return {"winners": result}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+@app.get("/matches/{match_id}/pool")
+def get_match_pool(match_id: str):
+    try:
+        predictions = supabase.table("predictions")\
+            .select("pick, stake")\
+            .eq("match_id", match_id)\
+            .eq("status", "pending")\
+            .execute()
+
+        team_a_pool = sum(p["stake"] for p in predictions.data if p["pick"] == "team_a")
+        draw_pool = sum(p["stake"] for p in predictions.data if p["pick"] == "draw")
+        team_b_pool = sum(p["stake"] for p in predictions.data if p["pick"] == "team_b")
+        total_pool = team_a_pool + draw_pool + team_b_pool
+
+        team_a_count = len([p for p in predictions.data if p["pick"] == "team_a"])
+        draw_count = len([p for p in predictions.data if p["pick"] == "draw"])
+        team_b_count = len([p for p in predictions.data if p["pick"] == "team_b"])
+
+        return {
+            "team_a_pool": team_a_pool,
+            "draw_pool": draw_pool,
+            "team_b_pool": team_b_pool,
+            "total_pool": total_pool,
+            "team_a_count": team_a_count,
+            "draw_count": draw_count,
+            "team_b_count": team_b_count
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))

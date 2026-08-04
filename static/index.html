@@ -392,7 +392,9 @@
                 var teamB = m.team_b ? m.team_b.name : 'TBA';
                 var kickoff = new Date(m.kickoff_time).toLocaleString();
                 var predictBtn = m.status === 'upcoming' ?
-                    '<button class="predict-btn" style="margin-top:12px;width:100%" onclick="openModal(\'' + m.id + '\',\'' + teamA + '\',\'' + teamB + '\')">Predict Now</button>' : '';
+                    '<button class="predict-btn" style="margin-top:12px;width:100%" onclick="openModal(\'' + m.id + '\',\'' + teamA + '\',\'' + teamB + '\')">Predict Now</button>' :
+                    m.status === 'live' ?
+                        '<div style="margin-top:12px;text-align:center;color:#ff4444;font-weight:700;font-size:13px">Predictions Closed - Match Live</div>' : '';
                 html += '<div class="match-card">';
                 html += '<div class="match-teams">';
                 html += '<div class="team-name">' + teamA + '</div>';
@@ -418,6 +420,22 @@
             document.querySelectorAll('.pick-btn').forEach(function (b) { b.classList.remove('selected'); });
             document.getElementById('stakeInput').value = '';
             document.getElementById('modalOverlay').classList.add('active');
+            loadPoolData(matchId, teamA, teamB);
+        }
+        async function loadPoolData(matchId, teamA, teamB) {
+            try {
+                var res = await fetch(API + '/matches/' + matchId + '/pool');
+                var data = await res.json();
+                var existingPool = document.getElementById('poolData');
+                if (existingPool) existingPool.remove();
+                var poolDiv = document.createElement('div');
+                poolDiv.id = 'poolData';
+                poolDiv.innerHTML = '<div style="background:#0f0f0f;border-radius:10px;padding:12px;margin-bottom:16px;text-align:center"><div style="color:#888;font-size:11px;letter-spacing:1px;margin-bottom:4px">TOTAL POOL</div><div style="color:#00ff87;font-weight:900;font-size:22px">N' + data.total_pool.toLocaleString() + '</div></div>';
+                var modal = document.querySelector('.modal');
+                modal.insertBefore(poolDiv, document.querySelector('.pick-options'));
+            } catch (err) {
+                console.log('Pool error');
+            }
         }
 
         function closeModal() {
