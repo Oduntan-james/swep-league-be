@@ -347,7 +347,7 @@ def settle_match(data: SettleMatchRequest):
 
         # Calculate total pool
         total_pool = sum(p["stake"] for p in all_predictions.data)
-        platform_fee = total_pool*0.2 #20% cut
+        platform_fee = total_pool*0.08 #8% cut
         total_pool_after_fee = total_pool - platform_fee
 
         # Get winning predictions
